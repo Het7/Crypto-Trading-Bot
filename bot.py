@@ -1,4 +1,7 @@
 import websocket, json, pprint, talib, numpy
+import config
+from binance.client import Client
+from binance.enums import *
 
 SOCKET = "wss://stream.binance.com:9443/ws/ethusdt@kline_1m"
 
@@ -10,6 +13,8 @@ TRADE_QUANTITY = 0.05
 
 closes = []
 in_position = False
+
+client = Client(config.API_KEY, config.API_SECRET, tld='us')
 
 def on_open(ws):
     print('opened connection')
