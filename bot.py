@@ -34,7 +34,7 @@ def on_close(ws):
     print('closed connection')
 
 def on_message(ws, message):
-    global closes
+    global closes, in_position
     print('received message')
     json_message = json.loads(message)
     pprint.pprint(json_message)
