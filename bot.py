@@ -16,6 +16,17 @@ in_position = False
 
 client = Client(config.API_KEY, config.API_SECRET, tld='us')
 
+def order(side, quantity, symbol, order_type=ORDER_TYPE_MARKET):
+    try:
+        print("Sending order!")
+        order = client.create_order(symbol=symbol, side=side, type=order_type, quantity=quantity)
+        print(order)
+    except Exception as e:
+        return False
+
+    return True
+        
+
 def on_open(ws):
     print('opened connection')
 
@@ -50,6 +61,9 @@ def on_message(ws, message):
             if last_rsi > RSI_OVERBOUGHT: 
                 if in_position:
                     print("Overbought! Sell! Sell!")
+                    order_succeeded = order(SIDE_SELL, TRADE_QUANTITY, TRADE_SYMBOL)
+                    if order_succeeded:
+                        in_position = False
                 else:
                     print("Overbought. You do not own anything, therefore, nothing to sell!")
 
@@ -58,6 +72,9 @@ def on_message(ws, message):
                     print("Oversold but you already own it!")
                 else:
                     print("Oversold! Buy! Buy!")
+                    order_succeeded = order(SIDE_BUY, TRADE_QUANTITY, TRADE_SYMBOL)
+                    if order_succeeded:
+                        in_position = True
 
 
 ws = websocket.WebSocketApp(SOCKET, on_open=on_open, on_close=on_close, on_message=on_message)
